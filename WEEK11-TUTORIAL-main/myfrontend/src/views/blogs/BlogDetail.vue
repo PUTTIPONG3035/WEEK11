@@ -1,10 +1,11 @@
 <template>
     <div class="container is-widescreen"  >
     <!-- <% if (error) { %> -->
-        <section class="section" v-if="error">
+        <section class="section" v-if="images.length == 0 && comments.length == 0">
         <div class="container is-widescreen">
             <div class="notification is-danger">
-                {{ error.code + ': ' + error.sqlMessage }}
+                <!-- {{ error.code + ': ' + error.sqlMessage }} -->
+                <h1> FOLKKKKKKKKKKKKKKKKKKKKKKK</h1>
               <!-- <%= error.code + ': ' + error.sqlMessage %> -->
             </div>
           </div>
@@ -13,7 +14,7 @@
     <div v-else>
         <section class="hero">
           <div class="hero-body">
-            <p class="title">{{ blogs.title }}</p> <!-- <%= blog.title %> -->
+            <p class="title">{{ blogs.title }}</p> 
           </div>
         </section>
         <section class="section" id="app">
@@ -51,6 +52,8 @@
                     <div class="card-content">
                         <div class="content">
                             <!-- <%= blog.content %> -->
+                            {{ blogs.content }}
+                            
                         </div>
                         <div class="container">
                             <p class="subtitle">Comments</p>
@@ -150,14 +153,11 @@ export default {
           this.blogs = response.data.blog;
           this.images = response.data.images;
           this.comments = response.data.comments;
+        //   this.error = response.data;
 
 
           console.log(response.data)
 
-          this.images.forEach(image => {
-                console.log(image.blog_id)
-          });
-          console.log(this.images)
         })
         .catch((err) => {
           console.log(err);
@@ -179,6 +179,7 @@ export default {
                 }).then(response => {
                     console.log(response.data)
                     // this.$router.push({path: '/'}) // Success! -> redirect to home page
+                    location.reload()
                 })
                 .catch(error => {
                     console.log(error.message);

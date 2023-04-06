@@ -3,6 +3,8 @@
       <section class="hero">
         <div class="hero-body">
           <p class="title">My Stories</p>
+
+       
         </div>
       </section>
       <section class="section" id="app">
@@ -10,7 +12,8 @@
             <form method="GET" action="/">
             <div class="columns">
               <div class="column is-4 is-offset-2">
-                <input class="input" type="text" name="search" placeholder="ค้นชื่อบทความ" value="">
+                <input class="input" type="text" name="search" placeholder="ค้นชื่อบทความ" value="" >
+               
               </div>
               <div class="column is-2">
                 <input class="button" type="submit" value="Search">
@@ -21,7 +24,7 @@
                 </router-link>
               </div>
             </div>
-          </form>
+            </form>
           </div>
             <div class="columns is-multiline">
               <!-- <% for (let blog of blogs) { %> -->
@@ -80,14 +83,16 @@ import axios  from 'axios';
 export default {
     data(){
         return{
-            blogs: null
+            blogs: null,
+            search: '',
+            reSearch : null
         }
     },
     created() {
     axios.get("http://localhost:3000/")
         .then((response) => {
           this.blogs = response.data;
-          console.log(this.blogs)
+        //   console.log(this.blogs)
         })
         .catch((err) => {
           console.log(err);
@@ -98,12 +103,49 @@ export default {
         like(blogId){
             console.log(blogId)
             axios.post(`http://localhost:3000/blogs/addlike/${blogId}`).then((res) =>{
-                console.log(res)
+                console.log( res)
                 location.reload()
             }).catch((err)=>{
                 console.log(err);
             })
-           
+        },
+        Search(){
+            var formData = new FormData();
+                formData.append("search", this.search);
+            axios.post(`http://localhost:3000/blogs/search/`, formData, {
+                    headers: {
+                    'Content-Type': 'multipart/form-data'
+                    }
+                }).then((res)=>{
+              
+                    this.reSearch = res.data
+                    console.log(res.data)
+                    this.
+                    location.reload()
+                }
+           ).catch(error =>{
+                console.log(error)
+            })
+
+
+            // var formData = new FormData();
+            //     formData.append("blog_image", this.file);
+            //     formData.append("title", this.title)
+            //     formData.append("content", this.content)
+            //     formData.append("status", this.status)
+            //     formData.append("pinned", this.pinned)
+            //     axios.post('http://localhost:3000/blogs', formData, {
+            //         headers: {
+            //         'Content-Type': 'multipart/form-data'
+            //         }
+            //     }).then(response => {
+            //         console.log(response.data)
+            //         this.$router.push({path: '/'}) // Success! -> redirect to home page
+            //     })
+            //     .catch(error => {
+            //         console.log(error.message);
+            //     });
+
         }
     }
 }

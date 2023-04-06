@@ -32,7 +32,8 @@ router.post('/:blogId/comments',  upload.single('blog_image'), async function(re
     }
     const comment = req.body.comment;
     const BlogId = req.params.blogId
-
+    const image = "/uploads/" + req.file.filename;
+    
 
     const conn = await pool.getConnection()
     // Begin transaction
@@ -47,9 +48,11 @@ router.post('/:blogId/comments',  upload.single('blog_image'), async function(re
 
       await conn.query(
         "INSERT INTO images(comment_id, blog_id, file_path) VALUES(?, ?, ?);",
-        [commentId, BlogId, file.path])
+        [commentId, BlogId, image])
 
       await conn.commit()
+      console.log(file.path)
+      console.log(file.filename)
       res.json("success!")
     } catch (err) {
       await conn.rollback();

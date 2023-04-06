@@ -17,8 +17,24 @@ var storage = multer.diskStorage({
 })
 const upload = multer({ storage: storage })
 
-router.post("/blogs/search", async function (req, res, next) {
+router.post("/blogs/search",upload.single(''), async function (req, res, next) {
   // Your code here
+  try{
+    const search = req.body.search
+    
+
+    console.log(search)
+  
+    const [rows, fields] = await pool.query("SELECT * FROM blogs WHERE title LIKE ?", [
+      `%${search}%`,
+    ]);
+    console.log(rows)
+    return res.json(rows);
+
+  } catch (err) {
+    console.log(err)
+    return next(err);
+  }
 });
 
 router.post("/blogs/addlike/:blogId", async function (req, res, next) {
@@ -99,7 +115,9 @@ router.post("/blogs", upload.single('blog_image'), async function (req, res, nex
 
 router.get("/blogs/:id", function (req, res, next) {
   const promise1 = pool.query("SELECT * FROM blogs WHERE id=?", [req.params.id]);
-  const promise2 = pool.query("SELECT * FROM comments WHERE blog_id=?", [req.params.id]);
+
+  const promise2 = pool.query("SELECT * FROM comments c  left outer join images i  on (i.comment_id = c.id ) where c.blog_id = ? " , [req.params.id])
+ 
   const promise3 = pool.query("SELECT * FROM images WHERE blog_id=? AND comment_id IS NULL", [req.params.id])
 
   Promise.all([promise1, promise2, promise3])
