@@ -9,7 +9,7 @@ const multer = require('multer')
 // SET STORAGE
 var storage = multer.diskStorage({
   destination: function (req, file, callback) {
-    callback(null, './static/uploads')
+    callback(null, 'C:/Users/User/OneDrive/Documents/WEBPRO LAB/WEEK11/WEEK11-TUTORIAL-main/myfrontend/public/uploads')
   },
   filename: function (req, file, callback) {
     callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
@@ -23,6 +23,7 @@ router.post("/blogs/search", async function (req, res, next) {
 
 router.post("/blogs/addlike/:blogId", async function (req, res, next) {
   //ทำการ select ข้อมูล blog ที่มี id = req.params.blogId
+  console.log(req.params.blogId)
   try{
     const [rows, fields] = await pool.query("SELECT * FROM blogs WHERE id=?", [
       req.params.blogId,
@@ -39,12 +40,13 @@ router.post("/blogs/addlike/:blogId", async function (req, res, next) {
     const [rows2, fields2] = await pool.query("UPDATE blogs SET blogs.like=? WHERE blogs.id=?", [
       likeNum, req.params.blogId,
     ]);
-
+  
     // return json response
     return res.json({
       blogId: Number(req.params.blogId),
       likeNum: likeNum
     })
+   
   } catch (err) {
     res.json(err)
   }
@@ -57,11 +59,17 @@ router.post("/blogs", upload.single('blog_image'), async function (req, res, nex
       error.httpStatusCode = 400;
       return res.json(error)
     }
-
+    const num = 1
     const title = req.body.title;
     const content = req.body.content;
     const status = req.body.status;
     const pinned = req.body.pinned;
+    console.log(pinned)
+    // if (pinned == true){
+    //    console.log('pinned')
+    //    num = 1
+    // }
+
 
     const conn = await pool.getConnection()
     // Begin transaction
@@ -69,8 +77,8 @@ router.post("/blogs", upload.single('blog_image'), async function (req, res, nex
 
     try {
       let results = await conn.query(
-        "INSERT INTO blogs(title, content, status, pinned, `like`,create_date) VALUES(?, ?, ?, ?, 0,CURRENT_TIMESTAMP);",
-        [title, content, status, pinned]
+        "INSERT INTO blogs(title, content, status, pinned, blogs.like,create_date) VALUES(?, ?, ?, ?, 0,CURRENT_TIMESTAMP);",
+        [title, content, status, num]
       )
       const blogId = results[0].insertId;
 
