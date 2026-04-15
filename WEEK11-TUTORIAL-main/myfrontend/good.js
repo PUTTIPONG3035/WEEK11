@@ -4,7 +4,7 @@ import React from 'react'
 const good = () => {
   return (
     <View>
-      <Text>good123</Text>
+      <Text>good12345</Text>
     </View>
   )
 }
